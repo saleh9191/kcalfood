@@ -1,613 +1,313 @@
 @extends('mainLayout')
-@section('content')
+@section('main-content')
 
     <style>
-
-        @media screen and (max-height: 992px) {
-            #productsSide {
-                display: none
-            }
-
-            #productsFooter {
-                display: block;
-            }
-        }
-
-        @media (min-width: 992px) {
-            #productsSide {
-                display: block
-            }
-
-            #productsFooter {
-                display: none;
-            }
-        }
 
 
 
 
     </style>
+    <script>
+
+        $.ajaxSetup({ headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') } });
+
+        function openNav() {
+            document.getElementById("mySidenav").style.width = "99%";
+            document.getElementById("products-footer1").style.display = "none"
+            document.getElementById("products-footer2").style.display = "block"
+        }
+
+        function closeNav() {
+            document.getElementById("mySidenav").style.width = "0";
+            document.getElementById("products-footer1").style.display = "block"
+            document.getElementById("products-footer2").style.display = "none"
+        }
+
+        function valueChanged() {
+//            for desktop size
+
+            $('#rangeCalories').on('input', function () {
+                $('#maxCalories').val($('#rangeCalories').val());
+            });
+            $('#rangeCarb').on('input', function () {
+                $('#maxCarb').val($('#rangeCarb').val());
+            });
+            $('#rangeProten').on('input', function () {
+                $('#maxProten').val($('#rangeProten').val());
+            });
+            $('#rangeFat').on('input', function () {
+                $('#maxFat').val($('#rangeFat').val());
+            });
+
+//            for mobile size
+
+            $('#rangeCalories1').on('input', function () {
+                $('#maxCalories1').val($('#rangeCalories1').val());
+            });
+            $('#rangeCarb1').on('input', function () {
+                $('#maxCarb1').val($('#rangeCarb1').val());
+            });
+            $('#rangeProten1').on('input', function () {
+                $('#maxProten1').val($('#rangeProten1').val());
+            });
+            $('#rangeFat1').on('input', function () {
+                $('#maxFat1').val($('#rangeFat1').val());
+            });
 
 
 
 
 
 
-    <section class="parallax-window" id="short" data-parallax="scroll" data-image-src="http://placehold.it/1400x300"
-             data-natural-width="1400" data-natural-height="300">
-        <div id="sub_header">
-            <div class="container" id="sub_content">
-                <div class="row">
-                    <div class="col-md-12">
-                        <h1>الفواكه</h1>
-                        <h3>هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة.</h3>
-                    </div>
-                </div><!-- End row -->
-            </div><!-- End container -->
-        </div>
-    </section>
-    <!-- End SubHeader -->
+        }
+        $(window).load(function () {
+            valueChanged()
+        });
 
-    <div class="white_bg">
-        <div class="container margin_60">
-            <div class="row">
-                <div id="productsSide">
-                    <aside class="col-md-3 sidebar sticky-sidebar">
-                        <div class="theiaStickySidebar">
-                            <div class="widget widget-filter">
-                                <div class="widget-title">
-                                    <i class="fa fa-filter"></i>بحث
-                                </div>
-                                <input type="search">
-                            </div>
-                            <div class="widget widget-filter">
-                                <div class="widget-title">
-                                    <i class="fa fa-filter"></i> تصفية المنتجات
-                                </div>
-                                <div class="products-filter">
-                                    <input id="range_slider"/>
-                                </div>
-                            </div><!-- End widget Filter -->
-                        </div>
-                    </aside>
-                </div>
-                <!-- End sidebar -->
-                <div class="col-md-9">
+        var flag = true;
+        //This function appends the login/register/logout in the top navbar to the dropdown list
+        function checksize() {
 
-                    <div class="row" style="padding-bottom:10px">
-                        <div class="col-md-4 col-sm-6 col-xs-12">
-                            <div class="product-item">
-                                <a href="single-product.html">
-                                    <div class="product-image">
-                                        <img src="http://placehold.it/250x230" alt=""/>
+            if ($(window).width() < 992 && flag) {
+                $("#productsSidebar").appendTo("#mySidenav");
+            } else if ($(window).width() >= 992) {
+                $("#productsSidebar").appendTo("#view-productsSidebar");
+
+            }
+        }
+        $(window).resize(checksize);
+        $(document).ready(function () {
+            checksize();
+
+        });
+
+
+
+
+    </script>
+
+    <!-- Start main-content -->
+    <div class="main-content">
+
+        <section class="">
+            <div class="container mt-30 mb-30 p-30">
+                <div class="section-content">
+                    <div class="row">
+                        <div id="view-productsSidebar" class="col-sm-12 col-md-3">
+                            <div id="productsSidebar" class="sidebar sidebar-right mt-sm-30 {{--hidden-xs hidden-sm--}}">
+                                <ul id="myTab" class="nav nav-tabs boot-tabs">
+                                    <li style="width: 50%" class="active"><a href="#home" data-toggle="tab">تصفية
+                                            النتائج</a></li>
+                                    <li style="width: 50%"><a href="#profile" data-toggle="tab">تصفية متقدمة</a></li>
+                                </ul>
+                                {{--start the reguler filter--}}
+                                <div id="myTabContent" class="tab-content">
+                                    <div class="tab-pane fade in active" id="home">
+                                        {{--search box--}}
+                                        <div class="widget">
+                                            <h5 class="widget-title line-bottom">بحث المنتجات</h5>
+                                            <div class="search-form">
+                                                <form action="/search_home" method="get" role="search">
+                                                    {{ csrf_field() }}
+                                                    <div class="input-group">
+                                                        <input type="text" placeholder="أدخل اسم المنتج"
+                                                               class="form-control search-input" name="search-value">
+                                                        <span class="input-group-btn">
+                      <button type="submit" class="btn search-button"><i class="fa fa-search"></i></button>
+                      </span>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+
+                                        <form action="/update_records" method="get">
+
+
+                                        {{--calories filter--}}
+                                        <div class="widget">
+                                            <h5 class="widget-title line-bottom">السعرات الحرارية</h5>
+                                            <div id="calories">
+                                                <div style="margin-top: 1em" value="0">
+
+                                                    <input id="rangeCalories" name="rangeCalories"  min="0"; start="2000";
+                                                           style="width:100%;" type="range"
+                                                           max="2000"
+                                                           value="2000" onchange="valueChanged()"/>
+                                                    <div class="clearfix">
+                                                        <input id="maxCalories" name="maxCalories"  value='2000' class="pull-left"
+                                                               style="width:50%;text-align: center;" type="number"
+                                                               placeholder="max">
+                                                        <input id="minCalories" name="minCalories"   value="0" class="pull-right"
+                                                               style="width:50%;text-align: center;" type="number"
+                                                               placeholder="min">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="widget">
+                                            <h5 class="widget-title line-bottom">الكربوهيدرات</h5>
+                                            <div id="carb">
+                                                <div style="margin-top: 1em" value="0">
+                                                    <input id="rangeCarb" name="rangeCarb" style="width:100%;" type="range" min="0" start="2000"
+                                                           max="2000"
+                                                           value="2000" onchange="valueChanged()"/>
+                                                    <div class="clearfix">
+                                                        <input id="maxCarb" name="maxCarb" value='2000' class="pull-left"
+                                                               style="width:50%;text-align: center;" type="number"
+                                                               placeholder="max">
+                                                        <input id="minCarb" name="minCarb" value="0" class="pull-right"
+                                                               style="width:50%;text-align: center;" type="number"
+                                                               placeholder="min">
+                                                    </div>
+                                                </div>
+
+
+
+                                            </div>
+                                        </div>
+
+
+                                        <div class="widget">
+                                            <h5 class="widget-title line-bottom">البروتين</h5>
+                                            <div id="calories">
+
+                                                <div style="margin-top: 1em" value="0">
+                                                    <input id="rangeProten" name="rangeProten" style="width:100%;" type="range" min="0"
+                                                           max="2000"
+                                                           value="2000" onchange="valueChanged()"/>
+                                                    <div class="clearfix">
+                                                        <input id="maxProten" name="minProten" value='2000' class="pull-left"
+                                                               style="width:50%;text-align: center;" type="number"
+                                                               placeholder="max">
+                                                        <input id="minProten"  name="maxProten" value="0" class="pull-right"
+                                                               style="width:50%;text-align: center;" type="number"
+                                                               placeholder="min">
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+
+                                        <div class="widget">
+                                            <h5 class="widget-title line-bottom">الدهون</h5>
+                                            <div id="calories">
+                                                <div style="margin-top: 1em" value="0">
+                                                    <input id="rangeFat" name="rangeFat" style="width:100%;" type="range" min="0"
+                                                           max="2000"
+                                                           value="2000" onchange="valueChanged()"/>
+                                                    <div class="clearfix">
+                                                        <input id="maxFat" name="minFat" value='2000' class="pull-left"
+                                                               style="width:50%;text-align: center;" type="number"
+                                                               placeholder="max">
+                                                        <input id="minFat" name="maxFat" value="0" class="pull-right"
+                                                               style="width:50%;text-align: center;" type="number"
+                                                               placeholder="min">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                            <button type="submit" style="width: 100%">أظهر نتائج التصفية
+                                            </button>
+                                            <input type="text"  style="display: block" value="{{$value}}" name="search-value">
+                                            <meta name="csrf-token" content="{{ csrf_token() }}" />
+                                        </form>
+
                                     </div>
-                                </a>
-                                <a href="single-product.html">
-                                    <h3 class="product-title">توت العُليق</h3>
-                                </a>
-                                <div class="product-ratings">
-                                    <ul class="stars">
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="price">
-                                    <span class="product-amount">$45.00</span>
-                                </div>
-                                <a href="javascript:void(0);" class="button add-to-cart-button"><i
-                                            class="icon_cart_alt"></i> أضف إلى السلة</a>
-                            </div>
-                        </div>
-                        <!-- END product-item -->
-                        <div class="col-md-4 col-sm-6 col-xs-12">
-                            <div class="product-item">
-                                <a href="single-product.html">
-                                    <div class="product-image">
-                                        <img src="http://placehold.it/250x230" alt=""/>
+
+                                    {{--start the advance filter--}}
+                                    <div class="tab-pane fade" id="profile">
+                                        <p>Food truck fixie locavore, accusamus mcsweeney's marfa nulla single-origin
+                                            coffee squid. Exercitation +1 labore velit, blog sartorial PBR leggings next
+                                            level wes anderson artisan four loko farm-to-table craft beer twee. Qui
+                                            photo booth letterpress, commodo enim craft beer mlkshk aliquip jean shorts
+                                            ullamco ad vinyl cillum PBR. Homo nostrud organic, assumenda labore
+                                            aesthetic magna delectus mollit. Keytar helvetica VHS salvia yr, vero magna
+                                            velit sapiente labore stumptown. Vegan fanny pack odio cillum wes anderson
+                                            8-bit, sustainable jean shorts beard ut DIY ethical culpa terry richardson
+                                            biodiesel. Art party scenester stumptown, tumblr butcher vero sint qui
+                                            sapiente accusamus tattooed echo park.</p>
                                     </div>
-                                </a>
-                                <a href="single-product.html">
-                                    <h3 class="product-title">مشمش الخوخ</h3>
-                                </a>
-                                <div class="product-ratings">
-                                    <ul class="stars">
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                    </ul>
                                 </div>
-                                <div class="price">
-                                    <span class="product-amount">$52.00</span>
-                                </div>
-                                <a href="javascript:void(0);" class="button add-to-cart-button"><i
-                                            class="fa fa-eye"></i> عرض التفاصيل</a>
-                            </div>
-                        </div>
-                        <!-- END product-item -->
-                        <div class="col-md-4 col-sm-6 col-xs-12">
-                            <div class="product-item">
-                                <a href="single-product.html">
-                                    <div class="product-image">
-                                        <img src="http://placehold.it/250x230" alt=""/>
-                                    </div>
-                                </a>
-                                <a href="single-product.html">
-                                    <h3 class="product-title">رمان</h3>
-                                </a>
-                                <div class="product-ratings">
-                                    <ul class="stars">
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="price">
-                                    <span class="product-amount">$64.00</span>
-                                </div>
-                                <a href="javascript:void(0);" class="button add-to-cart-button"><i
-                                            class="icon_cart_alt"></i> أضف إلى السلة</a>
-                            </div>
-                        </div>
-                        <!-- END product-item -->
-                        <div class="col-md-4 col-sm-6 col-xs-12">
-                            <div class="product-item">
-                                <a href="single-product.html">
-                                    <div class="product-image">
-                                        <img src="http://placehold.it/250x230" alt=""/>
-                                    </div>
-                                </a>
-                                <a href="single-product.html">
-                                    <h3 class="product-title">توت اسود</h3>
-                                </a>
-                                <div class="product-ratings">
-                                    <ul class="stars">
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="price">
-                                    <span class="product-amount">$40.00</span>
-                                </div>
-                                <a href="javascript:void(0);" class="button add-to-cart-button"><i
-                                            class="icon_adjust-horiz"></i> حدد الخيارات</a>
-                            </div>
-                        </div>
-                        <!-- END product-item -->
-                        <div class="col-md-4 col-sm-6 col-xs-12">
-                            <div class="product-item">
-                                <a href="single-product.html">
-                                    <div class="product-image">
-                                        <img src="http://placehold.it/250x230" alt=""/>
-                                    </div>
-                                </a>
-                                <a href="single-product.html">
-                                    <h3 class="product-title">الكيوى</h3>
-                                </a>
-                                <div class="product-ratings">
-                                    <ul class="stars">
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="price">
-                                    <span class="product-amount">$37.00</span>
-                                </div>
-                                <a href="javascript:void(0);" class="button add-to-cart-button"><i
-                                            class="icon_cart_alt"></i> أضف إلى السلة</a>
-                            </div>
-                        </div>
-                        <!-- END product-item -->
-                        <div class="col-md-4 col-sm-6 col-xs-12">
-                            <div class="product-item">
-                                <a href="single-product.html">
-                                    <div class="product-image">
-                                        <img src="http://placehold.it/250x230" alt=""/>
-                                    </div>
-                                </a>
-                                <a href="single-product.html">
-                                    <h3 class="product-title">فراولة</h3>
-                                </a>
-                                <div class="product-ratings">
-                                    <ul class="stars">
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="price">
-                                    <span class="product-amount">$30.00</span>
-                                </div>
-                                <a href="javascript:void(0);" class="button add-to-cart-button"><i
-                                            class="icon_adjust-horiz"></i> حدد الخيارات</a>
-                            </div>
-                        </div>
-                        <!-- END product-item -->
-                        <div class="col-md-4 col-sm-6 col-xs-12">
-                            <div class="product-item">
-                                <a href="single-product.html">
-                                    <div class="product-image">
-                                        <img src="http://placehold.it/250x230" alt=""/>
-                                    </div>
-                                </a>
-                                <a href="single-product.html">
-                                    <h3 class="product-title">اناناس</h3>
-                                </a>
-                                <div class="product-ratings">
-                                    <ul class="stars">
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="price">
-                                    <span class="product-amount">$43.00</span>
-                                </div>
-                                <a href="javascript:void(0);" class="button add-to-cart-button"><i
-                                            class="icon_cart_alt"></i> أضف إلى السلة</a>
-                            </div>
-                        </div>
-                        <!-- END product-item -->
-                        <div class="col-md-4 col-sm-6 col-xs-12">
-                            <div class="product-item">
-                                <a href="single-product.html">
-                                    <div class="product-image">
-                                        <img src="http://placehold.it/250x230" alt=""/>
-                                    </div>
-                                </a>
-                                <a href="single-product.html">
-                                    <h3 class="product-title">موز ناضج</h3>
-                                </a>
-                                <div class="product-ratings">
-                                    <ul class="stars">
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="price">
-                                    <span class="product-amount">$22.00</span>
-                                </div>
-                                <a href="javascript:void(0);" class="button add-to-cart-button"><i
-                                            class="icon_adjust-horiz"></i> حدد الخيارات</a>
-                            </div>
-                        </div>
-                        <!-- END product-item -->
-                        <div class="col-md-4 col-sm-6 col-xs-12">
-                            <div class="product-item">
-                                <a href="single-product.html">
-                                    <div class="product-image">
-                                        <img src="http://placehold.it/250x230" alt=""/>
-                                    </div>
-                                </a>
-                                <a href="single-product.html">
-                                    <h3 class="product-title">عنب الثور</h3>
-                                </a>
-                                <div class="product-ratings">
-                                    <ul class="stars">
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="price">
-                                    <span class="product-amount">$32.00</span>
-                                </div>
-                                <a href="javascript:void(0);" class="button add-to-cart-button"><i
-                                            class="icon_cart_alt"></i> أضف إلى السلة</a>
-                            </div>
-                        </div>
-                        <!-- END product-item -->
-                        <div class="col-md-4 col-sm-6 col-xs-12">
-                            <div class="product-item">
-                                <a href="single-product.html">
-                                    <div class="product-image">
-                                        <img src="http://placehold.it/250x230" alt=""/>
-                                    </div>
-                                </a>
-                                <a href="single-product.html">
-                                    <h3 class="product-title">مشمش الخوخ</h3>
-                                </a>
-                                <div class="product-ratings">
-                                    <ul class="stars">
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="price">
-                                    <span class="product-amount">$28.00</span>
-                                </div>
-                                <a href="javascript:void(0);" class="button add-to-cart-button"><i
-                                            class="icon_adjust-horiz"></i> حدد الخيارات</a>
-                            </div>
-                        </div>
-                        <!-- END product-item -->
-                        <div class="col-md-4 col-sm-6 col-xs-12">
-                            <div class="product-item">
-                                <a href="single-product.html">
-                                    <div class="product-image">
-                                        <img src="http://placehold.it/250x230" alt=""/>
-                                    </div>
-                                </a>
-                                <a href="single-product.html">
-                                    <h3 class="product-title">توت</h3>
-                                </a>
-                                <div class="product-ratings">
-                                    <ul class="stars">
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="price">
-                                    <span class="product-amount">$27.00</span>
-                                </div>
-                                <a href="javascript:void(0);" class="button add-to-cart-button"><i
-                                            class="icon_cart_alt"></i> أضف إلى السلة</a>
-                            </div>
-                        </div>
-                        <!-- END product-item -->
-                        <div class="col-md-4 col-sm-6 col-xs-12">
-                            <div class="product-item">
-                                <a href="single-product.html">
-                                    <div class="product-image">
-                                        <img src="http://placehold.it/250x230" alt=""/>
-                                    </div>
-                                </a>
-                                <a href="single-product.html">
-                                    <h3 class="product-title">زبيب</h3>
-                                </a>
-                                <div class="product-ratings">
-                                    <ul class="stars">
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                        <li class="active"><a href="#" class="icon"><i class="fa fa-star"></i></a>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="price">
-                                    <span class="product-amount">$31.50</span>
-                                </div>
-                                <a href="javascript:void(0);" class="button add-to-cart-button"><i
-                                            class="icon_adjust-horiz"></i> حدد الخيارات</a>
                             </div>
                         </div>
 
-                    </div>
+                        <div class="col-sm-12 col-md-9">
+                            <div class="row multi-row-clearfix">
+                                <div class="products">
 
-                    <!-- END product-item -->
-                </div>
-                <div class="row">
-                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                        <nav class="navigation pagination">
-                            <div class="nav-links">
-                                <a class="prev page-numbers">Previous</a>
-                                <span class="page-numbers current">1</span>
-                                <a class="page-numbers" href="#">2</a>
-                                <a class="page-numbers" href="#">3</a>
-                                <a class="page-numbers" href="#">4</a>
-                                <a class="page-numbers" href="#">5</a>
-                                <a class="next page-numbers" href="#">Next</a>
+
+
+                                    @unless($products->isEmpty())
+                                        @foreach($products as $product)
+                                    <div class="col-sm-6 col-md-4 col-lg-4 mb-30" style="z-index: 0" id="single-product">
+
+                                        <div class="product">
+                                            <div class="product-thumb"> <img alt="" src="https://placehold.it/255x194" class="img-responsive img-fullwidth">
+                                                <div class="overlay"></div>
+                                            </div>
+                                            <div class="product-details text-center">
+                                                <a href="#"><h5 class="product-title">{{$product->name}}</h5></a>
+                                                <div class="star-rating" title="Rated 5.00 out of 5"><span style="width: 100%;">5.00</span></div>
+                                                <div class="price"><del><span class="amount">$364.00</span></del><ins><span class="amount">$344.00</span></ins></div>
+                                                <div class="btn-add-to-cart-wrapper">
+                                                    <a class="btn btn-default btn-xs btn-add-to-cart" href="#">Add To Cart</a>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                         @endforeach
+                                    @endunless
+
+                                    <div class="col-md-12">
+                                        <nav>
+                                            <ul class="pagination theme-colored">
+                                                <li> <a href="#" aria-label="Previous"> <span aria-hidden="true">&laquo;</span> </a> </li>
+                                                <li class="active"><a href="#">1</a></li>
+                                                <li><a href="#">2</a></li>
+                                                <li><a href="#">3</a></li>
+                                                <li><a href="#">4</a></li>
+                                                <li><a href="#">5</a></li>
+                                                <li><a href="#">...</a></li>
+                                                <li> <a href="#" aria-label="Next"> <span aria-hidden="true">&raquo;</span> </a> </li>
+                                            </ul>
+                                        </nav>
+                                    </div>
+                                </div>
                             </div>
-                        </nav><!-- END pagination -->
+                        </div>
                     </div>
                 </div>
             </div>
+        </section>
+        <div id="mySidenav" class="sidenav hidden-md hidden-lg" style="margin-top: 57px">
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
 
         </div>
-        <div id="productsFooter"class="navbar navbar-inverse navbar-fixed-bottom" style="border-color: #fff">
-            <div class="container">
-                <div class="navbar-collapse collapse" id="footer-body" style="max-height: 100%;background-color: #7daf74;">
-                    <ul class="nav navbar-nav">
-                        <div class="widget widget-filter">
-                            <div class="widget-title">
-                                <i class="fa fa-filter"></i> تصفية المنتجات
-                            </div>
-                            <div class="products-filter">
-                                <input id="range_slider"/>
-                            </div>
-                        </div><!-- End widget Filter -->
-                        <div class="widget widget-filter">
-                            <div class="widget-title">
-                                <i class="fa fa-filter"></i> تصفية المنتجات
-                            </div>
-                            <div class="products-filter">
-                                <input id="range_slider"/>
-                            </div>
-                        </div><!-- End widget Filter -->
-                        <div class="widget widget-filter" style="">
-                            <div class="widget-title">
-                                <i class="fa fa-filter"></i> تصفية المنتجات
-                            </div>
-                            <div class="products-filter">
-                                <input id="range_slider"/>
-                            </div>
-                        </div><!-- End widget Filter -->
-                    </ul>
-                </div>
-                <nav class="navbar-header" style="background-color:#ffffff;">
-                        <button style="width:32%;margin: .5% 1% .5% 1%; background-color: #6c9e62; text-align: center;color:#ffffff;"
-                            class="navbar-toggle" data-toggle="collapse" data-target="#footer-body">مصفيات
-                        </button>
-                        <button style="width:32%;margin: .5% 0 .5% 0; background-color: #6c9e62;text-align: center;color:#ffffff;"
-                            class="navbar-toggle" data-toggle="collapse" data-target="#footer-body">رتب
-                        </button>
-                        <button style="width:32%;margin: .5% 1% .5% 1%;background-color: #6c9e62;text-align: center;color:#ffffff;"
-                            class="navbar-toggle" data-toggle="collapse" data-target="#footer-body">اذهب للأعلى
-                        </button>
 
-                    <button style="display: none;width:45%;margin: .5% 1% .5% 1%; background-color: #6c9e62; text-align: center;color:#ffffff;"
-                            class="navbar-toggle" data-toggle="collapse" data-target="#footer-body">فرع المصفيات
-                    </button>
-                    <button style="display: none;width:45%;margin: .5% 1% .5% 1%; background-color: #6c9e62; text-align: center;color:#ffffff;"
-                            class="navbar-toggle" data-toggle="collapse" data-target="#footer-body">أظهر النتائج
-                    </button>
-                </nav>
+        <ul class="ul-footer hidden-md hidden-lg" style="display: block" id="products-footer1">
+            <li class="li-footer" style="width:31%;margin: .5% 1% .5% 1%; background-color: #72a230; text-align: center;color:#ffffff;"><a href="#about">ترتيب</a></li>
+            <li class="li-footer" style="width:31%;margin: .5% 1% .5% 1%; background-color: #72a230; text-align: center;color:#ffffff;" onclick="openNav()"><a>مصفيات</a></li>
+            <li class="li-footer" style="width:31%;margin: .5% 1% .5% 1%; background-color: #72a230; text-align: center;color:#ffffff;margin-bottom:5px"><a href="#about">اذهب للأعلى</a></li>
+        </ul>
 
-            </div>
-        </div>
-
+        <ul class="ul-footer hidden-md hidden-lg" style="display: none" id="products-footer2">
+            <li class="li-footer" style="width:46%;margin: .5% 1% .5% 1%; background-color: #72a230; text-align: center;color:#ffffff;"><a href="#about">أظهر النتائج</a></li>
+            <li class="li-footer" style="width:46%;margin: .5% 1% .5% 1%; background-color: #72a230; text-align: center;color:#ffffff;"><a href="#about">فرع المصفيات</a></li>
+        </ul>
     </div>
-    </div>
+    <!-- end main-content -->
 
 
 
 
-
-
-
-    <div class="container margin_60">
-        <div class="row footer-shop">
-            <div class="col-md-3">
-                <i class="fa fa-truck"></i>
-                <h4>شحن لجميع أنحاء العالم</h4>
-                <p>هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة.</p>
-            </div>
-            <div class="col-md-3">
-                <i class="fa fa-credit-card"></i>
-                <h4>الدفع الآمن</h4>
-                <p>هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة.</p>
-            </div>
-            <div class="col-md-3">
-                <i class="fa fa-thumbs-up"></i>
-                <h4>تسوق بثقة</h4>
-                <p>هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة.</p>
-            </div>
-            <div class="col-md-3">
-                <i class="fa fa-life-ring"></i>
-                <h4>24/7 مركز المساعدة</h4>
-                <p>هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة.</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="white_bg">
-        <div class="container margin_60">
-            <div class="row">
-                <div class="col-md-4 text-center">
-                    <h4>دفع آمن</h4>
-                    <p>
-                        <img src="images/payment.png" alt="">
-                        <br/>
-                        قبول جميع انواع بطاقات الائتمان
-                    </p>
-                </div>
-                <div class="col-md-4 text-center">
-                    <h4>100% دفع آمن</h4>
-                    <p>
-                        <img src="images/quality.png" alt="">
-                    </p>
-                </div>
-                <div class="col-md-4 text-center">
-                    <h4>طريقة الشحن</h4>
-                    <p>
-                        <img src="images/shipping.png" alt="">
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.pjax/2.0.1/jquery.pjax.min.js"></script>
 
 
 
 
-
-
-    <!-- newslatter -->
-    <div class="newslatter">
-        <div class="container">
-            <p>اطلع علي كل جديد دائما معنا. اشترك في النشرة الإخبارية</p>
-            <div class="subcribe">
-                <input type="text" class="form-control" placeholder="أدخل البريد الإلكتروني الخاص بك">
-                <a class="fa fa-paper-plane" href="javascript:void(0);"></a>
-            </div>
-        </div>
-    </div><!-- End newslatter -->
-
-@endsection
+    @endsection

@@ -15,6 +15,22 @@ class pagesController extends Controller
         return view('mainPages.products');
     }
 
+    public function search()
+    {
+        return view('mainPages.pro');
+    }
+
+    public function searchDo(Request $request)
+    {
+
+        $products = Product::where('name', 'LIKE', '%' . $request->search . '%')-get();
+
+            return view('mainPages.productsGrid', compact('products'));
+
+    }
+
+
+
 
 
 
